@@ -24,7 +24,7 @@ import springbook.user.domain.User;
  * 			!. 작업 중 생성된 Connection, Statement, ResultSet은 작업 후 반드시 닫아준다.
  * 			!. JDBC가 만들어 내는 예외를 잡아 직접 처리하거나, throws를 선언 해 예외 발생 시 메소드 밖으로 던지게 함.
  */
-public class UserDao {
+public abstract class UserDao {
 	public void add(User user) throws ClassNotFoundException, SQLException{
 		// 사용자 정보를 등록한다.
 		Connection c = getConnection();
@@ -81,11 +81,12 @@ public class UserDao {
 		c.close();
 	}
 	
-	public Connection getConnection() throws ClassNotFoundException, SQLException{
+	public abstract Connection getConnection() throws ClassNotFoundException, SQLException;
+	/*{
 		Class.forName("com.mysql.jdbc.Driver");
 		Connection c =
 				DriverManager.getConnection(
 						"jdbc:mysql://localhost/springbook","spring","book");
 		return c;
-	}
+	}*/
 }

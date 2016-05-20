@@ -27,10 +27,7 @@ import springbook.user.domain.User;
 public class UserDao {
 	public void add(User user) throws ClassNotFoundException, SQLException{
 		// 사용자 정보를 등록한다.
-		Class.forName("com.mysql.jdbc.Driver");
-		Connection c =
-				DriverManager.getConnection(
-						"jdbc:mysql://localhost/springbook","spring","book");
+		Connection c = getConnection();
 		
 		PreparedStatement ps = c.prepareStatement(
 					"insert into users(id, name, password) "
@@ -47,10 +44,7 @@ public class UserDao {
 	
 	public User get(String id) throws ClassNotFoundException, SQLException{
 		//사용자의 정보를 가져온다.
-		Class.forName("com.mysql.jdbc.Driver");
-		Connection c =
-				DriverManager.getConnection(
-						"jdbc:mysql://localhost/springbook","spring","book");
+		Connection c = getConnection();
 		
 		PreparedStatement ps = c.prepareStatement(
 					"select id, name, password "
@@ -74,10 +68,7 @@ public class UserDao {
 	
 	public void delete(String id) throws ClassNotFoundException, SQLException{
 		// 사용자 정보를 등록한다.
-		Class.forName("com.mysql.jdbc.Driver");
-		Connection c =
-				DriverManager.getConnection(
-						"jdbc:mysql://localhost/springbook","spring","book");
+		Connection c = getConnection();
 		
 		PreparedStatement ps = c.prepareStatement(
 					"delete from users "
@@ -88,5 +79,13 @@ public class UserDao {
 		
 		ps.close();
 		c.close();
+	}
+	
+	public Connection getConnection() throws ClassNotFoundException, SQLException{
+		Class.forName("com.mysql.jdbc.Driver");
+		Connection c =
+				DriverManager.getConnection(
+						"jdbc:mysql://localhost/springbook","spring","book");
+		return c;
 	}
 }

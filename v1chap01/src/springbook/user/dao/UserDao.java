@@ -1,10 +1,11 @@
 package springbook.user.dao;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import springbook.user.domain.User;
 
@@ -24,10 +25,30 @@ import springbook.user.domain.User;
  * 			!. 작업 중 생성된 Connection, Statement, ResultSet은 작업 후 반드시 닫아준다.
  * 			!. JDBC가 만들어 내는 예외를 잡아 직접 처리하거나, throws를 선언 해 예외 발생 시 메소드 밖으로 던지게 함.
  */
-public abstract class UserDao {
+public class UserDao {
+	private ConnectionMaker connectionMaker;
+	
+	public void setConnectionMaker(ConnectionMaker connectionMaker){
+		this.connectionMaker = connectionMaker;
+	}
+	public UserDao(){
+		//DaoFactory를 이용하는 생성자.
+		/*DaoFactory daoFactory = new DaoFactory();
+		this.connectionMaker = daoFactory.connectionMaker();*/
+		
+		//의존관계 검색을 이용하는 UserDao생성자
+		AnnotationConfigApplicationContext context = 
+				new AnnotationConfigApplicationContext(DaoFactory.class);
+		this.connectionMaker = context.getBean("connectionMaker",ConnectionMaker.class);
+	}
+	
+	public UserDao(ConnectionMaker connectionMaker){
+		this.connectionMaker = connectionMaker;
+	}
+	
 	public void add(User user) throws ClassNotFoundException, SQLException{
 		// 사용자 정보를 등록한다.
-		Connection c = getConnection();
+		Connection c = this.connectionMaker.makeConnection();
 		
 		PreparedStatement ps = c.prepareStatement(
 					"insert into users(id, name, password) "
@@ -44,7 +65,7 @@ public abstract class UserDao {
 	
 	public User get(String id) throws ClassNotFoundException, SQLException{
 		//사용자의 정보를 가져온다.
-		Connection c = getConnection();
+		Connection c =this.connectionMaker.makeConnection();
 		
 		PreparedStatement ps = c.prepareStatement(
 					"select id, name, password "
@@ -68,7 +89,7 @@ public abstract class UserDao {
 	
 	public void delete(String id) throws ClassNotFoundException, SQLException{
 		// 사용자 정보를 등록한다.
-		Connection c = getConnection();
+		Connection c = this.connectionMaker.makeConnection();
 		
 		PreparedStatement ps = c.prepareStatement(
 					"delete from users "
@@ -81,8 +102,8 @@ public abstract class UserDao {
 		c.close();
 	}
 	
-	public abstract Connection getConnection() throws ClassNotFoundException, SQLException;
-	/*{
+	/*public abstract Connection getConnection() throws ClassNotFoundException, SQLException;
+	{
 		Class.forName("com.mysql.jdbc.Driver");
 		Connection c =
 				DriverManager.getConnection(

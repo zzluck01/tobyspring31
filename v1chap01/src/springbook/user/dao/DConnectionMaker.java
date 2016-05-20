@@ -4,11 +4,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class NUserDao extends UserDao {
+public class DConnectionMaker implements ConnectionMaker {
 
-	//@Override //  추상 클래스였을 때 사용된 것.
-	public Connection getConnection() throws ClassNotFoundException, SQLException {
-		//N사 DB Connection 생성코드
+	@Override
+	public Connection makeConnection() throws ClassNotFoundException, SQLException {
+		// TODO Auto-generated method stub
 		Class.forName("com.mysql.jdbc.Driver");
 		Connection c =
 				DriverManager.getConnection(

@@ -8,11 +8,9 @@ public class DConnectionMaker implements ConnectionMaker {
 
 	@Override
 	public Connection makeConnection() throws ClassNotFoundException, SQLException {
-		// TODO Auto-generated method stub
 		Class.forName("com.mysql.jdbc.Driver");
-		Connection c =
-				DriverManager.getConnection(
-						"jdbc:mysql://localhost/springbook","spring","book");
+		Connection c = DriverManager.getConnection(
+				"jdbc:mysql://localhost/springbook","spring","book");
 		return c;
 	}
 

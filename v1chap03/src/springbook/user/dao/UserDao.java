@@ -11,7 +11,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 
 import springbook.user.domain.User;
 
-public  class UserDao {
+public abstract  class UserDao {
 	private DataSource dataSource;
 	
 	public void setDataSource(DataSource dataSource){
@@ -58,32 +58,28 @@ public  class UserDao {
 	}
 	
 	public void deleteAll() throws SQLException{
-		
-		
 		Connection c = null;
 		PreparedStatement ps = null;
 		try{
 			c = this.dataSource.getConnection();
-			ps = c.prepareStatement(
-					"delete from users");
+			
+			ps = makeStatement(c);	// 변하는 부분.
+			
 			ps.executeUpdate();
 		} catch (SQLException e){
 			throw e;
 		} finally {
-			if(ps !=null){
-				try{
-					ps.close();
-				} catch (SQLException e){
-				}
-			}
-			if(c !=null){
-				try{
-					c.close();
-				} catch (SQLException e){
-				}
-			}
+			if(ps !=null){try{ps.close();} catch (SQLException e){}}
+			if(c !=null){try{c.close();} catch (SQLException e){}}
 		}
 	}
+
+	abstract protected PreparedStatement makeStatement(Connection c) throws SQLException;
+	/*{
+		PreparedStatement ps;
+		ps = c.prepareStatement("delete from users");
+		return ps;
+	}*/
 	
 	public int getCount() throws SQLException{
 		Connection c= null;
@@ -100,24 +96,9 @@ public  class UserDao {
 		} catch (SQLException e){
 			throw e;
 		}finally {
-			if(rs !=null){
-				try{
-					rs.close();
-				} catch (SQLException e){
-				}
-			}
-			if(ps !=null){
-				try{
-					ps.close();
-				} catch (SQLException e){
-				}
-			}
-			if(c !=null){
-				try{
-					c.close();
-				} catch (SQLException e){
-				}
-			}
+			if(rs !=null){try{rs.close();} catch (SQLException e){}}
+			if(ps !=null){try{ps.close();} catch (SQLException e){}}
+			if(c !=null){try{c.close();} catch (SQLException e){}}
 		}
 	}
 	
@@ -132,6 +113,5 @@ public  class UserDao {
 		ps.close();
 		c.close();
 	}
-	
 }
 
